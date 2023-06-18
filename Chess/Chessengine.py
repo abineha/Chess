@@ -21,20 +21,20 @@ class GameState():
         self.checks=[]
         self.incheck=False
 
+
     def makemove(self,move):
-        if self.board[move.startrow][move.startcol] != '--':
-            self.board[move.startrow][move.startcol] = '--'
-            self.board[move.endrow][move.endcol] = move.piecemoved
-            self.movelog.append(move)
-            self.whitemove = not(self.whitemove)
-            # track king position
-            if move.piecemoved=="wk":
-                self.wking=(move.endrow,move.endcol)
-            elif move.piecemoved=="bk":
-                self.bking = (move.endrow, move.endcol)
+        self.board[move.startrow][move.startcol] = '--'
+        self.board[move.endrow][move.endcol] = move.piecemoved
+        self.movelog.append(move)
+        self.whitemove = not(self.whitemove)
+        # track king position
+        if move.piecemoved=="wk":
+            self.wking=(move.endrow,move.endcol)
+        elif move.piecemoved=="bk":
+            self.bking = (move.endrow, move.endcol)
 
-
-
+        if move.pawnpromotion:
+            self.board[move.endrow][move.endcol] = move.piecemoved[0] + "Q"
 
 
     def undo(self):
@@ -48,6 +48,9 @@ class GameState():
                 self.wking=(move.startrow,move.startcol)
             elif move.piecemoved=="bk":
                 self.bking = (move.startrow, move.startcol)
+
+        self.checkmate = False
+        self.stalemate = False
 
     def getvalidmoves(self):
         moves=[]
@@ -85,9 +88,22 @@ class GameState():
         else:
             moves=self.getallpossiblemoves()
 
+        if len(moves) == 0:
+            if self.inCheck():
+                self.checkmate = True
+            else:
+                self.stalemate = True
+        else:
+            self.checkmate = False
+            self.stalemate = False
+
         return moves
 
-
+    def inCheck(self):
+        if self.whitemove:
+            return self.squnderattk(self.wking[0], self.wking[1])
+        else:
+            return self.squnderattk(self.bking[0], self.bking[1])
 
 
 
@@ -105,7 +121,7 @@ class GameState():
             allycolor = "b"
             startrow = self.bking[0]
             startcol = self.bking[1]
-        dir=((-1,0),(0,-1),(1,0),(0,1),(-1,-1),(-1,1),(1,-1),(1,1))
+        dir=((-1, 0), (0, -1), (1, 0), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1))
         for j in range(len(dir)):
             d=dir[j]
             possiblepin=()
@@ -140,7 +156,7 @@ class GameState():
                 else:
                     break
 
-        knightmoves=((-2,-1),(-2,1),(-1,-2),(-1,2),(1,-2),(1,2),(2,-1),(2,1))
+        knightmoves=((-2, -1), (-2, 1), (-1, 2), (1, 2), (2, -1), (2, 1), (-1, -2), (1, -2))
         for m in knightmoves:
             endrow=startrow+m[0]
             endcol=startcol+m[1]
@@ -151,11 +167,7 @@ class GameState():
                     checks.append((endrow,endcol,m[0],m[1]))
         return incheck,pins,checks
 
-    def incheck(self):
-        if self.whitemove:
-            return self.squnderattk(self.wking[0],self.wking[1])
-        else:
-            return self.squnderattk(self.bking[0], self.bking[1])
+
 
     def squnderattk(self,r,c):
         self.whitemove=not(self.whitemove)  #opp turn
@@ -189,40 +201,31 @@ class GameState():
                 break
 
         if self.whitemove:
-            print('w')
-            if(self.board[r-1][c]=="--"):
-                if not piecepinned or pindir==(-1,0):
-                    moves.append(move((r,c),(r-1,c),self.board))
-                    if r==6 and self.board[r-2][c]=="--":
-                        moves.append(move((r,c),(r-2,c),self.board))
-
-            if (c-1)>=0: #cant capture passing left board all the way to right board n left captures
-                if self.board[r-1][c-1][0]=='b':
-                    if not piecepinned or pindir == (-1, -1):
-                        moves.append(move((r, c), (r-1,c-1), self.board))
-            if c+1<=7: #right captures
-                if self.board[r-1][c+1]=="b":
-                    if not piecepinned or pindir == (-1, 1):
-                        print(r,c)
-                        moves.append(move((r, c), (r-1,c+1), self.board))
-
+            move_amount = -1
+            start_row = 6
+            enemy_color = "b"
+            king_row, king_col = self.wking
         else:
-            if self.board[r+1][c]=="--":
-                if not piecepinned or pindir==(1,0):
-                    moves.append(move((r,c),(r+1,c),self.board))
-                    if r==1 and self.board[r+2][c]=="--":
-                        moves.append(move((r,c),(r+2,c),self.board))
+            move_amount = 1
+            start_row = 1
+            enemy_color = "w"
+            king_row, king_col = self.bking
 
-            if c-1>=0:
-                if self.board[r+1][c-1][0]=='w':
-                    if not piecepinned or pindir==(1,-1):
-                        print(r,c)
-                        moves.append(move((r,c),(r+1,c-1),self.board))
-            if c+1<=7:
-                if self.board[r+1][c+1][0]=='w':
-                    if not piecepinned or pindir==(1,1):
-                        print(r, c)
-                        moves.append(move((r,c),(r+1,c+1),self.board))
+        if self.board[r+move_amount][c] == "--":  # 1 square pawn advance
+            if not piecepinned or pindir == (move_amount, 0):
+                moves.append(move((r, c), (r + move_amount, c), self.board))
+                if r == start_row and self.board[r + 2 * move_amount][c] == "--":  # 2 square pawn advance
+                    moves.append(move((r, c), (r + 2 * move_amount, c), self.board))
+        if c - 1 >= 0:  # capture to the left
+            if not piecepinned or pindir == (move_amount, -1):
+                if self.board[r + move_amount][c - 1][0] == enemy_color:
+                    moves.append(move((r, c), (r + move_amount, c - 1), self.board))
+
+        if c + 1 <= 7:  # capture to the right
+            if not piecepinned or pindir == (move_amount, +1):
+                if self.board[r + move_amount][c + 1][0] == enemy_color:
+                    moves.append(move((r, c), (r + move_amount, c + 1), self.board))
+
 
 
     def getrookmoves(self,r,c,moves):

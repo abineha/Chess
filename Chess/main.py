@@ -49,8 +49,6 @@ def main():
                     playerclicks.append(sqselected)
                 if len(playerclicks)==2:
                     move=Chessengine.move(playerclicks[0],playerclicks[1],gs.board)
-                    print(validmoves)
-                    print(move.getchessnotation())
                     for i in range(len(validmoves)):
                         if move==validmoves[i]:
                             gs.makemove(move)
