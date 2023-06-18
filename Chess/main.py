@@ -27,6 +27,8 @@ def main():
     clock=p.time.Clock()
     screen.fill(p.Color("white"))
     gs=Chessengine.GameState()
+    validmoves=gs.getvalidmoves()
+    movemade=False
     loadimages()
     running=True
     sqselected=() #row,col
@@ -47,14 +49,26 @@ def main():
                     playerclicks.append(sqselected)
                 if len(playerclicks)==2:
                     move=Chessengine.move(playerclicks[0],playerclicks[1],gs.board)
+                    print(validmoves)
                     print(move.getchessnotation())
-                    gs.makemove(move)
-                    sqselected=()
-                    playerclicks=[]
+                    for i in range(len(validmoves)):
+                        if move==validmoves[i]:
+                            gs.makemove(move)
+                            movemade=True
+                            sqselected=()
+                            playerclicks=[]
+                    if not movemade: #invalid move 2 click
+                        playerclicks=[sqselected]
             #undo
             elif e.type==p.KEYDOWN:
                 if e.key==p.K_z:
                     gs.undo()
+                    movemade=True
+
+
+        if movemade:
+            validmoves=gs.getvalidmoves()
+            movemade=False
 
 
         drawGameState(screen, gs)
