@@ -4,7 +4,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 import pygame as p
-from Chess import Chessengine,ai
+from Chess import Chessengine,ai,simultaion
 import sys
 from multiprocessing import Process, Queue
 
@@ -27,6 +27,7 @@ def main():
     clock=p.time.Clock()
     screen.fill(p.Color("white"))
     gs=Chessengine.GameState()
+    sim=simultaion.gamestate()
     validmoves=gs.getvalidmoves()
     movemade=False
     loadimages()
@@ -44,6 +45,7 @@ def main():
     print("2. Chess player vs ai")
     print("3. Chess graphs")
     choice=int(input("Enter choice:"))
+    ans = True
     if choice==2:
         while running:
             human_turn = (gs.whitemove and player_one) or (not gs.whitemove and player_two)
@@ -134,6 +136,27 @@ def main():
             drawGameState(screen, gs)
             clock.tick(max_fps)
             p.display.flip()
+
+    elif choice==1:
+        while ans:
+            for e in p.event.get():
+                if e.type == p.QUIT:
+                    running = False
+                    p.quit()
+                    sys.exit()
+                sim.pri()
+                ch=input("enter opening:")
+                sim.choice(ch,p,screen)
+                a = input("continue? y/n")
+                ans = True if a == 'y' else False
+                p.time.wait(5000)
+                del sim
+                sim = simultaion.gamestate()
+                print(sim.board)
+                drawGameState(screen, sim)
+                clock.tick(max_fps)
+                p.display.flip()
+
 
 
 def drawGameState(screen,gs):
