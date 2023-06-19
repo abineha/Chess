@@ -41,7 +41,8 @@ class gamestate():
                       ["--", "--", "--", "--", "--", "--", "--", "--"],
                       ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
                       ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]]
-        self.map={"The Italian Game":0,"The Sicilian Defense":1,"The French Defense":2,"The Ruy-Lopez":3,"The Slav Defense":4}
+        self.map={"The Italian Game":0,"The Sicilian Defense":1,"The French Defense":2,
+                  "The Ruy-Lopez":3,"The Slav Defense":4}
         n1=SLinkedList()
         n2 = SLinkedList()
         n3 = SLinkedList()
@@ -114,7 +115,7 @@ class SLinkedList:
         drawBoard(screen)
         drawPieces(screen, board)
         p.display.flip()
-        p.time.wait(5000)
+        p.time.wait(3000)
         printval = printval.nextval
 
    def AtEnd(self, newdata):

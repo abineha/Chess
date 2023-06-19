@@ -1,7 +1,3 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 import pygame as p
 from Chess import Chessengine,ai,simultaion,graph
@@ -149,7 +145,7 @@ def main():
                 sim.choice(ch,p,screen)
                 a = input("continue? y/n")
                 ans = True if a == 'y' else False
-                p.time.wait(5000)
+                p.time.wait(2000)
                 del sim
                 sim = simultaion.gamestate()
                 print(sim.board)
