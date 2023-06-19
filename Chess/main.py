@@ -4,7 +4,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 import pygame as p
-from Chess import Chessengine,ai,simultaion
+from Chess import Chessengine,ai,simultaion,graph
 import sys
 from multiprocessing import Process, Queue
 
@@ -156,6 +156,13 @@ def main():
                 drawGameState(screen, sim)
                 clock.tick(max_fps)
                 p.display.flip()
+
+    elif choice==3:
+        drawGameState(screen, sim)
+        clock.tick(max_fps)
+        p.display.flip()
+        p.time.wait(5000)
+        graph.fun()
 
 
 
