@@ -1,5 +1,5 @@
 # Chess-optimal-moves-simulation
-Three objectives of code implemented:
+Three objectives implemented:
 
 i.	Simulating Chess openings: 
 The Italian Game, Sicilian Defense, The French Defense, The Ruy-Lopez, The Slav Defense. Simulation involving turn wise moves to give player a demo to learn the best and efficient openings that could optimize their moves and increase win rate during gameplay.
