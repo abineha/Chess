@@ -14,7 +14,7 @@ Implementing the chess game involving player vs AI. AI moves are decided by impl
 
 
 iii.	Displaying graph for each piece in chess:
-The valid moves for each piece are calculated and positions are described as vertices of a graph where the edge of the graph displays the move transition from one tile to another tile. The Knight’s tour problem coded and transitions to be displayed as a graph
+The valid moves for each piece are calculated and positions are described as vertices of a graph where the edge of the graph displays the move transition from one tile to another tile. The Knight’s tour problem coded and transitions are displayed as a graph
 
 ![image](https://github.com/abineha/Chess-optimal-moves-simulation/assets/101180980/953b9125-44b5-4797-8628-137c57d0e231)
 
